@@ -40,6 +40,7 @@
     <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.5l1.1-3.9A8 8 0 1 1 20 11.5z"/></symbol>
     <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/></symbol>
     <symbol id="i-back" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-fwd" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
     <symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M6 12h12M12 6v12"/></symbol>
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.5 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></symbol>
@@ -81,14 +82,14 @@
     <p class="hero-lead" data-i18n="hero.lead">בשמחה ובהתרגשות מזמינים אתכם לחגוג איתנו</p>
 
     <h1 class="names">
-      <span class="name-col">
+      <span class="name-block tom">
         <span class="name-label" data-i18n="hero.tomLabel">ברית המילה של</span>
-        <span class="name name-tom" data-i18n="hero.tom">תום</span>
+        <span class="name" data-i18n="hero.tom">תום</span>
       </span>
-      <svg class="names-heart" aria-hidden="true"><use href="#i-heart"/></svg>
-      <span class="name-col">
+      <span class="names-divider" aria-hidden="true"><svg class="names-heart"><use href="#i-heart"/></svg></span>
+      <span class="name-block mia">
         <span class="name-label" data-i18n="hero.miaLabel">יום הולדת שנתיים של</span>
-        <span class="name name-mia" data-i18n="hero.mia">מיה</span>
+        <span class="name" data-i18n="hero.mia">מיה</span>
       </span>
     </h1>
 
@@ -98,23 +99,23 @@
     </div>
 
     <a href="#rsvp" id="hero-cta" class="btn btn-primary btn-lg">
-      <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
-      <span data-i18n="cta.rsvp">אישור הגעה</span>
+      <span data-i18n="cta.rsvp">מגיעים? עדכנו אותנו</span>
+      <svg class="icon icon-fwd" aria-hidden="true"><use href="#i-fwd"/></svg>
     </a>
-    <p class="hero-deadline" data-i18n="hero.deadline">נשמח לתשובה עד יום שלישי, 20.10</p>
+    <p class="hero-deadline" data-i18n="hero.deadline">גם אם לא תוכלו להגיע – נשמח לתשובה עד יום שלישי, 20.10</p>
 
     <svg class="wave" viewBox="0 0 390 40" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0 22 C 50 2, 90 42, 140 22 S 230 2, 280 22 S 350 42, 390 20 L390 40 L0 40 Z"/>
     </svg>
   </header>
 
-  <section class="section countdown" id="countdown" aria-label="ספירה לאחור">
-    <p class="eyebrow" data-i18n="count.title">עוד רגע חוגגים</p>
-    <div class="count-tiles">
-      <div class="tile tile-pink"><span class="tile-num" id="cd-days">–</span><span class="tile-label" data-i18n="count.days">ימים</span></div>
-      <div class="tile tile-blue"><span class="tile-num" id="cd-hours">–</span><span class="tile-label" data-i18n="count.hours">שעות</span></div>
-      <div class="tile tile-yellow"><span class="tile-num" id="cd-mins">–</span><span class="tile-label" data-i18n="count.mins">דקות</span></div>
-    </div>
+  <section class="countdown" id="countdown">
+    <p class="count-line">
+      <span data-i18n="count.title">עוד</span>
+      <b id="cd-days">–</b> <span data-i18n="count.days">ימים</span><span class="dot" aria-hidden="true">·</span>
+      <b id="cd-hours">–</b> <span data-i18n="count.hours">שעות</span><span class="dot" aria-hidden="true">·</span>
+      <b id="cd-mins">–</b> <span data-i18n="count.mins">דקות</span>
+    </p>
   </section>
 
   <section class="section reveal">
@@ -130,7 +131,7 @@
 
   <section class="section reveal">
     <h2 data-i18n="plan.title">מה בתוכנית</h2>
-    <ol class="schedule">
+    <ol class="schedule compact">
       <li><span class="time t-blue">10:30</span><span data-i18n="plan.1">קבלת פנים</span></li>
       <li><span class="time t-yellow">11:00</span><span data-i18n="plan.2">ארוחת בראנץ׳</span></li>
       <li><span class="time t-pink">12:30</span><span data-i18n="plan.3">טקס הברית וברכות</span></li>
@@ -148,7 +149,26 @@
     </div>
   </section>
 
-  <section class="section section-tight reveal">
+  <section class="section gift reveal" id="gift">
+    <span class="badge badge-pink badge-lg"><svg class="icon" aria-hidden="true"><use href="#i-gift"/></svg></span>
+    <h2 data-i18n="gift.title">רוצים לשמח במתנה?</h2>
+    <p data-i18n="gift.body">הנוכחות שלכם היא המתנה הכי גדולה. ולמי שבכל זאת רוצה, אפשר בקלות מהנייד:</p>
+    <div class="btn-row">
+      <button type="button" class="btn btn-dark btn-lg" data-gift="bit"><span data-i18n="gift.bit">מתנה ב‑bit</span></button>
+      <button type="button" class="btn btn-primary btn-lg" data-gift="paybox"><span data-i18n="gift.paybox">מתנה ב‑PayBox</span></button>
+    </div>
+    <div class="phone-row">
+      <span class="phone-text">
+        <span class="phone-label" data-i18n="gift.numberLabel">המספר להעברה</span>
+        <span class="phone-num" dir="ltr" data-fill="phone">054-948-8882</span>
+      </span>
+      <button type="button" class="btn btn-soft" id="copy-phone">
+        <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg><span data-i18n="gift.copy">העתקת מספר</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="section section-tight reveal vote">
     <div class="note-card note-yellow">
       <span class="badge"><svg class="icon" aria-hidden="true"><use href="#i-bus"/></svg></span>
       <div>
@@ -187,24 +207,6 @@
     </div>
   </section>
 
-  <section class="section gift reveal" id="gift">
-    <span class="badge badge-pink badge-lg"><svg class="icon" aria-hidden="true"><use href="#i-gift"/></svg></span>
-    <h2 data-i18n="gift.title">רוצים לשמח במתנה?</h2>
-    <p data-i18n="gift.body">הנוכחות שלכם היא המתנה הכי גדולה. ולמי שבכל זאת רוצה, אפשר בקלות מהנייד:</p>
-    <div class="btn-row">
-      <button type="button" class="btn btn-dark btn-lg" data-gift="bit"><span data-i18n="gift.bit">מתנה ב‑bit</span></button>
-      <button type="button" class="btn btn-primary btn-lg" data-gift="paybox"><span data-i18n="gift.paybox">מתנה ב‑PayBox</span></button>
-    </div>
-    <div class="phone-row">
-      <span class="phone-text">
-        <span class="phone-label" data-i18n="gift.numberLabel">המספר להעברה</span>
-        <span class="phone-num" dir="ltr" data-fill="phone">054-948-8882</span>
-      </span>
-      <button type="button" class="btn btn-soft" id="copy-phone">
-        <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg><span data-i18n="gift.copy">העתקת מספר</span>
-      </button>
-    </div>
-  </section>
 
   <footer class="footer">
     <svg class="wave wave-top" viewBox="0 0 390 40" preserveAspectRatio="none" aria-hidden="true">
@@ -213,8 +215,8 @@
     <p class="footer-title" data-i18n="foot.title">מחכים לכם באהבה</p>
     <p class="footer-names" data-i18n="foot.names">אלון, הדר, מיה ותום קרמר</p>
     <a href="#rsvp" class="btn btn-primary btn-lg">
-      <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
-      <span data-i18n="cta.rsvp">אישור הגעה</span>
+      <span data-i18n="cta.rsvp">מגיעים? עדכנו אותנו</span>
+      <svg class="icon icon-fwd" aria-hidden="true"><use href="#i-fwd"/></svg>
     </a>
     <a class="btn btn-white" id="wa-link" href="#" target="_blank" rel="noopener">
       <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>
@@ -226,7 +228,7 @@
 <!-- ===================== טופס אישור הגעה ===================== -->
 <section id="view-rsvp" class="view view-rsvp" hidden>
   <a href="#" class="back-link"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span data-i18n="nav.back">חזרה להזמנה</span></a>
-  <h1 data-i18n="rsvp.title">אישור הגעה</h1>
+  <h1 data-i18n="rsvp.title">מגיעים?</h1>
   <p class="sub" data-i18n="rsvp.sub">הברית של תום ויום ההולדת של מיה · 27.10.2026</p>
   <p class="sub strong" data-i18n="rsvp.once">טופס אחד לכל המשפחה, בבקשה.</p>
   <p class="already" id="already" hidden data-i18n="rsvp.already">כבר קיבלנו מכם תשובה, תודה! אם משהו השתנה, מלאו שוב ונעדכן.</p>
@@ -285,7 +287,7 @@
       <textarea id="f-note" name="note" rows="3" maxlength="600" data-i18n-ph="rsvp.notePh" placeholder="כמה מילים חמות לתום, למיה ולהורים"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit-btn"><span data-i18n="rsvp.send">שליחת אישור הגעה</span></button>
+    <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit-btn"><span data-i18n="rsvp.send">שליחת התשובה</span></button>
     <div class="send-error" id="send-error" hidden>
       <p data-i18n="rsvp.sendErr">משהו השתבש בשליחה. אפשר לנסות שוב, או לשלוח לנו את הפרטים בוואטסאפ:</p>
       <a class="btn btn-outline btn-block" id="send-wa" href="#" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span data-i18n="rsvp.sendWa">שליחה בוואטסאפ</span></a>
@@ -343,8 +345,8 @@
 <!-- כפתור צף -->
 <div class="sticky-cta" id="sticky-cta" hidden>
   <a href="#rsvp" class="btn btn-primary btn-lg btn-block">
-    <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
-    <span data-i18n="cta.rsvp">אישור הגעה</span>
+    <span data-i18n="cta.rsvp">מגיעים? עדכנו אותנו</span>
+    <svg class="icon icon-fwd" aria-hidden="true"><use href="#i-fwd"/></svg>
   </a>
 </div>
 
