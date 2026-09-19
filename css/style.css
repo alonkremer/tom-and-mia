@@ -264,6 +264,13 @@ input[aria-invalid="true"] { border-color: #B3394F; }
 .st-blue { background: var(--sky); color: #35506B; }
 .st-pink { background: var(--pink); color: #5B3B45; }
 .stepper-label { font-weight: 700; font-size: 15.5px; }
+.stepper-hint { margin-top: -8px; font-size: 13.5px; }
+.confirm-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.confirm-tiles .stepper { gap: 2px; }
+.confirm-tiles .stepper-hint { margin-top: 0; }
+.confirm-num { font-family: var(--display); font-weight: 600; font-size: 44px; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.confirm-total { font-size: 17px; }
+.confirm-total strong { font-family: var(--display); font-weight: 600; font-size: 20px; }
 .stepper-ctl { display: flex; align-items: center; gap: 8px; direction: ltr; }
 .stepper-ctl button { width: 46px; height: 46px; border: 0; border-radius: 50%; background: var(--white); color: inherit; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .stepper-ctl button:active { transform: scale(.92); }

@@ -232,14 +232,9 @@
 
   <form id="rsvp-form" novalidate>
     <div class="field">
-      <label for="f-name" data-i18n="rsvp.name">שם מלא</label>
+      <label for="f-name" data-i18n="rsvp.name">שם ושם משפחה</label>
       <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="80">
-      <p class="error" id="err-name" hidden data-i18n="rsvp.errName">נשמח לדעת מי אתם</p>
-    </div>
-    <div class="field">
-      <label for="f-phone" data-i18n="rsvp.phone">טלפון</label>
-      <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" dir="ltr">
-      <p class="error" id="err-phone" hidden data-i18n="rsvp.errPhone">נראה שחסרות ספרות במספר</p>
+      <p class="error" id="err-name" hidden data-i18n="rsvp.errName">נשמח לדעת מי אתם – שם ושם משפחה</p>
     </div>
     <!-- מלכודת ספאם: שדה מוסתר שבני אדם לא ממלאים -->
     <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
@@ -256,6 +251,7 @@
       <div class="steppers">
         <div class="stepper st-blue">
           <span class="stepper-label" id="lbl-adults" data-i18n="rsvp.adults">בוגרים</span>
+          <span class="stepper-hint" data-i18n="rsvp.adultsHint">גיל 13 ומעלה</span>
           <div class="stepper-ctl">
             <button type="button" data-step="adults" data-delta="-1" aria-label="פחות בוגרים"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
             <output id="n-adults" aria-labelledby="lbl-adults" aria-live="polite">2</output>
@@ -264,6 +260,7 @@
         </div>
         <div class="stepper st-pink">
           <span class="stepper-label" id="lbl-kids" data-i18n="rsvp.kids">ילדים</span>
+          <span class="stepper-hint" data-i18n="rsvp.kidsHint">עד גיל 12</span>
           <div class="stepper-ctl">
             <button type="button" data-step="kids" data-delta="-1" aria-label="פחות ילדים"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
             <output id="n-kids" aria-labelledby="lbl-kids" aria-live="polite">0</output>
@@ -358,6 +355,27 @@
   <a class="btn btn-outline btn-block" id="gd-open" href="#" target="_blank" rel="noopener" hidden></a>
   <button type="button" class="btn btn-primary btn-lg btn-block" id="gd-done"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="gd.done">העברתי</span></button>
   <button type="button" class="btn btn-text btn-block" id="gd-cancel" data-i18n="gd.cancel">אולי אחר כך</button>
+</dialog>
+
+<!-- חלון וידוא כמויות לפני שליחה -->
+<dialog id="confirm-dialog" aria-labelledby="confirm-title">
+  <h2 id="confirm-title" data-i18n="cf.title">רגע לפני ששולחים</h2>
+  <p data-i18n="cf.lead">רק מוודאים שספרנו נכון. מי מגיע?</p>
+  <div class="confirm-tiles">
+    <div class="stepper st-blue">
+      <span class="stepper-label" data-i18n="rsvp.adults">בוגרים</span>
+      <span class="confirm-num" id="cf-adults">2</span>
+      <span class="stepper-hint" data-i18n="rsvp.adultsHint">גיל 13 ומעלה</span>
+    </div>
+    <div class="stepper st-pink">
+      <span class="stepper-label" data-i18n="rsvp.kids">ילדים</span>
+      <span class="confirm-num" id="cf-kids">0</span>
+      <span class="stepper-hint" data-i18n="rsvp.kidsHint">עד גיל 12</span>
+    </div>
+  </div>
+  <p class="confirm-total"><span data-i18n="cf.total">סה״כ מגיעים:</span> <strong id="cf-total">2</strong></p>
+  <button type="button" class="btn btn-primary btn-lg btn-block" id="cf-yes"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="cf.yes">נכון, אפשר לשלוח</span></button>
+  <button type="button" class="btn btn-outline btn-block" id="cf-no" data-i18n="cf.no">רגע, לתקן את המספרים</button>
 </dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

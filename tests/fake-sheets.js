@@ -84,8 +84,8 @@ function createEnv() {
       const sheet = sheets.RSVP;
       if (!sheet) return [];
       return sheet.data.slice(1).map((r) => ({
-        updated: r[0], name: r[1], phone: r[2], attending: r[3], adults: r[4],
-        kids: r[5], food: r[6], note: r[7], lang: r[8], created: r[9]
+        updated: r[0], name: r[1], attending: r[2], adults: r[3], kids: r[4],
+        food: r[5], note: r[6], lang: r[7], created: r[8]
       }));
     },
     /** מה שנוסחאות גיליון "סיכום" מחשבות (SUMIF / COUNTIF), על הנתונים הנוכחיים. */

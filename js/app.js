@@ -199,9 +199,7 @@
       });
     });
 
-    ['name', 'phone'].forEach(function (f) {
-      $('#f-' + f).addEventListener('input', function () { setError(f, false); });
-    });
+    $('#f-name').addEventListener('input', function () { setError('name', false); });
 
     form.addEventListener('submit', onSubmit);
   }
@@ -217,8 +215,7 @@
     var form = $('#rsvp-form');
     var coming = form.attending.value === 'yes';
     return {
-      name: form.name.value.trim(),
-      phone: form.phone.value.trim(),
+      name: form.name.value.replace(/\s+/g, ' ').trim(),
       attending: coming ? 'yes' : 'no',
       adults: coming ? counts.adults : 0,
       kids: coming ? counts.kids : 0,
@@ -232,7 +229,6 @@
     var lines = [
       t('js.wa.rsvp'),
       t('js.wa.name') + ': ' + d.name,
-      t('js.wa.phone') + ': ' + d.phone,
       d.attending === 'yes' ? t('js.wa.yes') : t('js.wa.no')
     ];
     if (d.attending === 'yes') {
@@ -248,11 +244,10 @@
     var form = e.currentTarget;
     var data = readForm();
 
-    var badName = data.name.length < 2;
-    var badPhone = data.phone.replace(/\D/g, '').length < 9;
+    // השם הוא המזהה של המשפחה בגיליון, לכן מבקשים שם + שם משפחה (שתי מילים לפחות)
+    var badName = data.name.split(' ').length < 2 || data.name.length < 4;
     setError('name', badName);
-    setError('phone', badPhone);
-    if (badName || badPhone) { $(badName ? '#f-name' : '#f-phone').focus(); return; }
+    if (badName) { $('#f-name').focus(); return; }
 
     var done = function () {
       store('rsvpDone', '1');
@@ -261,6 +256,29 @@
 
     // בוטים ממלאים את השדה הנסתר – מתנהגים כאילו נשלח
     if (form.website.value) { done(); return; }
+
+    // מי שמגיע מאשר קודם את הכמויות בחלון קופץ; "לתקן" מחזיר אותו למונים
+    if (data.attending === 'yes') confirmCounts(data, function () { send(data, done); });
+    else send(data, done);
+  }
+
+  function confirmCounts(data, onYes) {
+    var dlg = $('#confirm-dialog');
+    $('#cf-adults').textContent = data.adults;
+    $('#cf-kids').textContent = data.kids;
+    $('#cf-total').textContent = data.adults + data.kids;
+
+    var close = function () { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); };
+    $('#cf-yes').onclick = function () { close(); onYes(); };
+    $('#cf-no').onclick = function () {
+      close();
+      $('.steppers').scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'center' });
+      $('[data-step="adults"][data-delta="1"]').focus({ preventScroll: true });
+    };
+    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+  }
+
+  function send(data, done) {
 
     $('#send-error').hidden = true;
 
