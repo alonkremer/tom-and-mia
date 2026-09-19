@@ -132,6 +132,7 @@
       var src = (cfg.photos || [])[Number(img.getAttribute('data-photo'))];
       if (!src) { markEmpty(); return; }
       img.addEventListener('error', markEmpty);
+      img.style.objectPosition = (cfg.photoFocus || [])[Number(img.getAttribute('data-photo'))] || '50% 30%';
       img.src = src;
     });
   }

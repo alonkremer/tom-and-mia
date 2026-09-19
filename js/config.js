@@ -9,7 +9,7 @@ window.EVENT_CONFIG = {
 
   // כתובת ה-Web App של Google Apps Script (ראו apps-script/SETUP.md).
   // כל עוד השדה ריק – אישורי ההגעה נשלחים אליכם בוואטסאפ במקום לגיליון.
-  rsvpEndpoint: '',
+  rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbzgbxlLWN-qu0i5ltKF47Dh1GXWmwaZMRo96x3I-_WXX5xNxoeGcA-xnZgYZxBC5Ge8hg/exec',
 
   // טלפון לביט / פייבוקס / וואטסאפ
   phoneDisplay: '054-948-8882',
@@ -20,8 +20,16 @@ window.EVENT_CONFIG = {
   venueName: 'בית חב״ד 770',
   address: 'מרדכי יואל סגל 3, ראשון לציון',
 
-  // עד 4 תמונות, לפי הסדר. לדוגמה: ['images/photo1.jpg', 'images/photo2.jpg']
-  photos: [],
+  // 4 התמונות, לפי המיקום שלהן באתר (שם הקובץ = המיקום).
+  // להחלפת תמונה: שומרים קובץ חדש באותו שם בדיוק בתיקיית images (ראו README).
+  // photoFocus: איזה חלק של התמונה נשאר בפריים כשהיא נחתכת למסגרת (אופקי אנכי). '50% 30%' = מרכז, קצת מעל האמצע.
+  photos: [
+    'images/photo-1-top-right.jpg',
+    'images/photo-2-top-left.jpg',
+    'images/photo-3-bottom-right.jpg',
+    'images/photo-4-bottom-left.jpg'
+  ],
+  photoFocus: ['50% 35%', '55% 25%', '45% 25%', '50% 40%'],
 
   // אופציונלי: קישורי תשלום אישיים מתוך האפליקציות (אם יוצרים כאלה). ריק = רק העתקת מספר.
   bitLink: '',

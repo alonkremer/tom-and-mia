@@ -9,7 +9,7 @@
 | מה | איפה |
 |---|---|
 | תאריך ושעה, תאריך אחרון לאישור, טלפון, כתובת | [`js/config.js`](js/config.js) – מתעדכן בכל האתר, כולל ספירה לאחור, ווייז ויומן Google |
-| **תמונות** | שמים קבצים ב‑`images/` ורושמים אותם ב‑`photos` שב‑[`js/config.js`](js/config.js) |
+| **תמונות** | ראו "החלפת תמונה" למטה |
 | חיבור הטופס לגיליון Google | [`apps-script/SETUP.md`](apps-script/SETUP.md) |
 | טקסטים בעברית | [`index.html`](index.html) |
 | טקסטים באנגלית | [`js/i18n.js`](js/i18n.js) |
@@ -22,6 +22,24 @@
 ```bash
 chrome --headless=new --window-size=1200,630 --virtual-time-budget=8000 --screenshot=images/og.png tools/og.html
 ```
+
+## החלפת תמונה
+
+שם הקובץ הוא המיקום באתר (גם בעברית וגם באנגלית):
+
+| מיקום באתר | קובץ |
+|---|---|
+| למעלה מימין | `images/photo-1-top-right.jpg` |
+| למעלה משמאל | `images/photo-2-top-left.jpg` |
+| למטה מימין | `images/photo-3-bottom-right.jpg` |
+| למטה משמאל | `images/photo-4-bottom-left.jpg` |
+
+```bash
+python tools/add-photo.py 2 "C:/path/to/new photo.jpeg"
+```
+
+הפקודה מקטינה את התמונה, מנקה ממנה מטא-דאטה ושומרת אותה במקום הנכון (כאן: מיקום 2, למעלה משמאל). אחר כך `git add -A`, `git commit`, `git push`.
+אם הפנים נחתכות במסגרת – משנים את הערך המתאים ב-`photoFocus` שב-`js/config.js` (אופקי אנכי, למשל `'50% 20%'` מזיז את הפריים למעלה).
 
 ## פיתוח ובדיקות
 
