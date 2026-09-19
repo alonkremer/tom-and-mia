@@ -228,6 +228,7 @@
   <a href="#" class="back-link"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span data-i18n="nav.back">חזרה להזמנה</span></a>
   <h1 data-i18n="rsvp.title">אישור הגעה</h1>
   <p class="sub" data-i18n="rsvp.sub">הברית של תום ויום ההולדת של מיה · 27.10.2026</p>
+  <p class="sub strong" data-i18n="rsvp.once">טופס אחד לכל המשפחה, בבקשה.</p>
   <p class="already" id="already" hidden data-i18n="rsvp.already">כבר קיבלנו מכם תשובה, תודה! אם משהו השתנה, מלאו שוב ונעדכן.</p>
 
   <form id="rsvp-form" novalidate>
@@ -268,6 +269,11 @@
           </div>
         </div>
       </div>
+      <fieldset class="field" id="companions" hidden>
+        <legend><span data-i18n="rsvp.compTitle">מי מגיע איתך?</span> <span class="optional" data-i18n="rsvp.optional">(לא חובה)</span></legend>
+        <p class="field-hint" data-i18n="rsvp.compHint">שמות פרטיים מספיקים. ככה לא נספור פעמיים את אותם אנשים אם גם בן או בת הזוג ימלאו את הטופס.</p>
+        <div class="comp-list" id="comp-list"></div>
+      </fieldset>
       <div class="field">
         <label for="f-food"><span data-i18n="rsvp.food">אלרגיות או העדפות אוכל</span> <span class="optional" data-i18n="rsvp.optional">(לא חובה)</span></label>
         <input id="f-food" name="food" type="text" maxlength="200" data-i18n-ph="rsvp.foodPh" placeholder="צמחוני, ללא גלוטן, אלרגיה לאגוזים…">
@@ -366,11 +372,13 @@
       <span class="stepper-label" data-i18n="rsvp.adults">בוגרים</span>
       <span class="confirm-num" id="cf-adults">2</span>
       <span class="stepper-hint" data-i18n="rsvp.adultsHint">גיל 13 ומעלה</span>
+      <span class="confirm-names" id="cf-adult-names"></span>
     </div>
     <div class="stepper st-pink">
       <span class="stepper-label" data-i18n="rsvp.kids">ילדים</span>
       <span class="confirm-num" id="cf-kids">0</span>
       <span class="stepper-hint" data-i18n="rsvp.kidsHint">עד גיל 12</span>
+      <span class="confirm-names" id="cf-kid-names"></span>
     </div>
   </div>
   <p class="confirm-total"><span data-i18n="cf.total">סה״כ מגיעים:</span> <strong id="cf-total">2</strong></p>

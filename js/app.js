@@ -88,6 +88,7 @@
     toggle.textContent = lang === 'he' ? 'EN' : 'עב';
     toggle.setAttribute('aria-label', t('js.switchLang'));
 
+    renderCompanions();
     buildLinks();
     store('lang', lang);
   }
@@ -180,6 +181,46 @@
   /* ---------- טופס ---------- */
   var counts = { adults: 2, kids: 0 };
   var limits = { adults: [1, 20], kids: [0, 20] };
+  // שמות המצטרפים (לא חובה). נשמרים גם כשמורידים כמות ומעלים שוב.
+  var companions = { adult: [], kid: [] };
+
+  // שדה לכל בוגר נוסף (מעבר לממלא/ת הטופס) ולכל ילד, לפי המונים
+  function renderCompanions() {
+    var list = $('#comp-list');
+    var need = { adult: counts.adults - 1, kid: counts.kids };
+    list.textContent = '';
+    ['adult', 'kid'].forEach(function (kind) {
+      for (var n = 0; n < need[kind]; n++) {
+        var label = t('js.comp.' + kind) + ' ' + (kind === 'adult' ? n + 2 : n + 1);
+        var row = document.createElement('div');
+        row.className = 'comp-row';
+        var chip = document.createElement('span');
+        chip.className = 'comp-chip ' + kind;
+        chip.textContent = label;
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 40;
+        input.autocomplete = 'off';
+        input.placeholder = t('js.comp.ph');
+        input.setAttribute('aria-label', label + ' – ' + t('js.comp.ph'));
+        input.setAttribute('data-comp', kind + '-' + n);
+        input.value = companions[kind][n] || '';
+        input.addEventListener('input', (function (k, idx) {
+          return function (e) { companions[k][idx] = e.target.value; };
+        })(kind, n));
+        row.appendChild(chip);
+        row.appendChild(input);
+        list.appendChild(row);
+      }
+    });
+    $('#companions').hidden = need.adult + need.kid === 0;
+  }
+
+  function companionNames(kind, max) {
+    return companions[kind].slice(0, max)
+      .map(function (n) { return (n || '').replace(/\s+/g, ' ').trim(); })
+      .filter(function (n) { return n; });
+  }
 
   function initForm() {
     var form = $('#rsvp-form');
@@ -190,6 +231,7 @@
         var next = counts[which] + Number(btn.getAttribute('data-delta'));
         counts[which] = Math.min(limits[which][1], Math.max(limits[which][0], next));
         $('#n-' + which).textContent = counts[which];
+        renderCompanions();
       });
     });
 
@@ -219,6 +261,8 @@
       attending: coming ? 'yes' : 'no',
       adults: coming ? counts.adults : 0,
       kids: coming ? counts.kids : 0,
+      adultNames: coming ? companionNames('adult', counts.adults - 1) : [],
+      kidNames: coming ? companionNames('kid', counts.kids) : [],
       food: coming ? form.food.value.trim() : '',
       note: form.note.value.trim(),
       lang: lang
@@ -233,6 +277,8 @@
     ];
     if (d.attending === 'yes') {
       lines.push(t('js.wa.adults') + ': ' + d.adults, t('js.wa.kids') + ': ' + d.kids);
+      if (d.adultNames.length) lines.push(t('js.wa.with') + ': ' + d.adultNames.join(', '));
+      if (d.kidNames.length) lines.push(t('js.wa.kidNames') + ': ' + d.kidNames.join(', '));
       if (d.food) lines.push(t('js.wa.food') + ': ' + d.food);
     }
     if (d.note) lines.push(t('js.wa.note') + ': ' + d.note);
@@ -267,6 +313,8 @@
     $('#cf-adults').textContent = data.adults;
     $('#cf-kids').textContent = data.kids;
     $('#cf-total').textContent = data.adults + data.kids;
+    $('#cf-adult-names').textContent = [data.name].concat(data.adultNames).join(', ');
+    $('#cf-kid-names').textContent = data.kidNames.join(', ');
 
     var close = function () { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); };
     $('#cf-yes').onclick = function () { close(); onYes(); };

@@ -2,13 +2,14 @@
  * אישורי הגעה – הברית של תום ויום ההולדת של מיה
  * הסקריפט מקבל את הטופס מהאתר ושומר כל משפחה בשורה אחת בגיליון "RSVP".
  * מי שממלא שוב עם אותו שם (בלי הבדל של רווחים / אותיות גדולות) – השורה שלו מתעדכנת ולא נוצרת כפילות.
+ * אם נראה שאותם אנשים נספרו בשתי שורות (בני זוג שמילאו כל אחד בנפרד) – העמודה "לבדיקה" מסמנת את זה.
  * הוראות התקנה: SETUP.md
  */
 
 var SHEET_NAME = 'RSVP';
 var SUMMARY_NAME = 'סיכום';
-var HEADERS = ['עודכן לאחרונה', 'שם', 'מגיעים', 'בוגרים', 'ילדים', 'אלרגיות / העדפות', 'ברכה', 'שפה', 'נרשם לראשונה'];
-var COL = { updated: 0, name: 1, attending: 2, adults: 3, kids: 4, food: 5, note: 6, lang: 7, created: 8 };
+var HEADERS = ['עודכן לאחרונה', 'שם', 'מגיעים', 'בוגרים', 'ילדים', 'בוגרים נוספים (שמות)', 'ילדים (שמות)', 'אלרגיות / העדפות', 'ברכה', 'שפה', 'נרשם לראשונה', 'לבדיקה'];
+var COL = { updated: 0, name: 1, attending: 2, adults: 3, kids: 4, adultNames: 5, kidNames: 6, food: 7, note: 8, lang: 9, created: 10, check: 11 };
 var YES = 'כן';
 var NO = 'לא';
 
@@ -48,7 +49,8 @@ function saveRsvp_(data) {
     if (nameKey_(rows[i][COL.name]) === clean.nameKey) { found = i; break; }
   }
 
-  var row = [now, clean.name, clean.attending, clean.adults, clean.kids, clean.food, clean.note, clean.lang, now];
+  var row = [now, clean.name, clean.attending, clean.adults, clean.kids, clean.adultNames.join(', '), clean.kidNames.join(', '),
+    clean.food, clean.note, clean.lang, now, overlapNote_(clean, rows, found)];
   if (found === -1) {
     sheet.appendRow(row);
     return { ok: true, action: 'created' };
@@ -71,6 +73,8 @@ function validate_(data) {
     attending: coming ? YES : NO,
     adults: coming ? count_(data.adults, 1, 20) : 0,
     kids: coming ? count_(data.kids, 0, 20) : 0,
+    adultNames: coming ? names_(data.adultNames, count_(data.adults, 1, 20) - 1) : [],
+    kidNames: coming ? names_(data.kidNames, count_(data.kids, 0, 20)) : [],
     food: coming ? text_(data.food, 200) : '',
     note: text_(data.note, 600),
     lang: data.lang === 'en' ? 'en' : 'he'
@@ -80,6 +84,43 @@ function validate_(data) {
 /** המפתח שלפיו מזהים משפחה: השם, בלי הבדלי רווחים, אותיות גדולות או גרש מוביל. */
 function nameKey_(value) {
   return String(value == null ? '' : value).replace(/^'/, '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/** רשימת שמות נקייה: בלי ריקים, בלי פסיקים (הם המפריד בתא), ולא יותר מהכמות שהוצהרה. */
+function names_(list, max) {
+  if (!Array.isArray(list)) return [];
+  var out = [];
+  for (var i = 0; i < list.length && out.length < max; i++) {
+    var n = text_(String(list[i] == null ? '' : list[i]).replace(/,/g, ' '), 40);
+    if (n.replace(/^'/, '')) out.push(n);
+  }
+  return out;
+}
+
+function firstWord_(value) { return nameKey_(value).split(' ')[0] || ''; }
+function lastWord_(value) { var p = nameKey_(value).split(' '); return p[p.length - 1] || ''; }
+function firstWords_(cell) {
+  return String(cell == null ? '' : cell).split(',').map(firstWord_).filter(function (w) { return w; });
+}
+
+/**
+ * חשד לספירה כפולה: שתי שורות "מגיעים" עם אותו שם משפחה, כשהשם הפרטי של אחד הממלאים
+ * מופיע ברשימת המצטרפים של השני. מחזיר טקסט לעמודת "לבדיקה" (או ריק).
+ */
+function overlapNote_(clean, rows, selfIndex) {
+  if (clean.attending !== YES) return '';
+  var mine = clean.adultNames.concat(clean.kidNames).map(firstWord_);
+  var hits = [];
+  for (var i = 1; i < rows.length; i++) {
+    if (i === selfIndex || rows[i][COL.attending] !== YES) continue;
+    var other = rows[i][COL.name];
+    if (lastWord_(other) !== lastWord_(clean.name)) continue;
+    var theirs = firstWords_(rows[i][COL.adultNames]).concat(firstWords_(rows[i][COL.kidNames]));
+    if (theirs.indexOf(firstWord_(clean.name)) !== -1 || mine.indexOf(firstWord_(other)) !== -1) {
+      hits.push(String(other).replace(/^'/, ''));
+    }
+  }
+  return hits.length ? 'ייתכן שנספרו פעמיים – לבדוק מול: ' + hits.join(', ') : '';
 }
 
 function count_(value, min, max) {

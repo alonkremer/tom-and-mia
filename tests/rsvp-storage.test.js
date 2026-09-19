@@ -22,11 +22,11 @@ test('הרשמה ראשונה יוצרת גיליון, כותרות, שורה ו
 
   const sheet = env.sheets.RSVP;
   // המערך נוצר בתוך ה-vm, לכן מעתיקים אותו לפני ההשוואה
-  assert.deepEqual([...sheet.data[0]], ['עודכן לאחרונה', 'שם', 'מגיעים', 'בוגרים', 'ילדים', 'אלרגיות / העדפות', 'ברכה', 'שפה', 'נרשם לראשונה']);
+  assert.deepEqual([...sheet.data[0]], ['עודכן לאחרונה', 'שם', 'מגיעים', 'בוגרים', 'ילדים', 'בוגרים נוספים (שמות)', 'ילדים (שמות)', 'אלרגיות / העדפות', 'ברכה', 'שפה', 'נרשם לראשונה', 'לבדיקה']);
   assert.equal(sheet.frozen, 1);
   assert.equal(sheet.rtl, true);
   assert.equal(sheet.data.length, 2);
-  assert.equal(sheet.data[1].length, 9, 'אין עמודת טלפון');
+  assert.equal(sheet.data[1].length, 12, 'שורת נתונים באורך הכותרת, בלי עמודת טלפון');
 
   const row = env.rows()[0];
   assert.equal(row.name, 'דנה לוי');
@@ -171,7 +171,7 @@ test('קלט לא תקין נדחה ולא נשמר', () => {
 test('בקשה ישנה שעדיין שולחת טלפון – השדה פשוט מתעלמים ממנו', () => {
   const env = createEnv();
   assert.equal(env.post(guest({ phone: '0501234567' })).ok, true);
-  assert.equal(env.sheets.RSVP.data[1].length, 9);
+  assert.equal(env.sheets.RSVP.data[1].length, 12);
   assert.ok(!env.sheets.RSVP.data[1].includes('0501234567'));
 });
 
@@ -242,4 +242,80 @@ test('תרחיש מלא: 40 משפחות, עדכונים וביטולים – ה
   const kids = yes.reduce((s, g) => s + g.kids, 0);
   assert.equal(env.rows().length, 40);
   assert.deepEqual(env.summary(), { adults, kids, total: adults + kids, familiesYes: yes.length, familiesNo: 40 - yes.length });
+});
+
+test('שמות המצטרפים נשמרים בעמודות נפרדות, נקיים, ולא יותר מהכמות שהוצהרה', () => {
+  const env = createEnv();
+  env.post(guest({
+    name: 'דני כהן', adults: 2, kids: 3,
+    adultNames: ['  מיכל  ', '', 'מישהו מיותר'],
+    kidNames: ['נועה', 'איתי, הקטן', '=גיל', 'רביעי מיותר']
+  }));
+  const row = env.rows()[0];
+  assert.equal(row.adultNames, 'מיכל', 'בוגר נוסף אחד בלבד (adults - 1)');
+  assert.equal(row.kidNames, "נועה, איתי  הקטן, '=גיל", 'פסיק בתוך שם מוחלף ברווח, נוסחה מנוטרלת, מקסימום 3');
+  assert.equal(row.check, '');
+});
+
+test('שמות מצטרפים הם רשות: בלי השדה, עם ערך לא תקין, או כשלא מגיעים – העמודות ריקות', () => {
+  const env = createEnv();
+  env.post(guest({ name: 'אורח ראשון' }));
+  env.post(guest({ name: 'אורח שני', adultNames: 'לא מערך', kidNames: null }));
+  env.post(guest({ name: 'אורח שלישי', attending: 'no', adultNames: ['מישהו'], kidNames: ['ילד'] }));
+  for (const row of env.rows()) {
+    assert.equal(row.adultNames, '');
+    assert.equal(row.kidNames, '');
+  }
+});
+
+test('עדכון מחליף גם את שמות המצטרפים', () => {
+  const env = createEnv();
+  env.post(guest({ name: 'דני כהן', adults: 2, kids: 1, adultNames: ['מיכל'], kidNames: ['נועה'] }));
+  env.post(guest({ name: 'דני כהן', adults: 1, kids: 2, adultNames: ['מיכל'], kidNames: ['נועה', 'איתי'] }));
+  const rows = env.rows();
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].adultNames, '', 'ירד לבוגר אחד – אין מצטרפים בוגרים');
+  assert.equal(rows[0].kidNames, 'נועה, איתי');
+});
+
+test('ספירה כפולה: בני זוג שמילאו כל אחד בנפרד מסומנים בעמודת "לבדיקה"', () => {
+  const env = createEnv();
+  env.post(guest({ name: 'דני כהן', adults: 2, kids: 3, adultNames: ['מיכל'], kidNames: ['נועה', 'איתי', 'גיל'] }));
+  assert.equal(env.rows()[0].check, '');
+
+  // מיכל ממלאת בנפרד ומצרפת את דני ואת הילדים
+  env.post(guest({ name: 'מיכל כהן', adults: 2, kids: 3, adultNames: ['דני'], kidNames: ['נועה', 'איתי', 'גיל'] }));
+  assert.match(env.rows()[1].check, /דני כהן/);
+
+  // גם בלי שמיכל כתבה שמות: היא מופיעה ברשימה של דני
+  const env2 = createEnv();
+  env2.post(guest({ name: 'דני כהן', adults: 2, adultNames: ['מיכל'] }));
+  env2.post(guest({ name: 'מיכל כהן', adults: 2 }));
+  assert.match(env2.rows()[1].check, /דני כהן/);
+
+  // וגם בכיוון ההפוך: רק השנייה כתבה שמות
+  const env3 = createEnv();
+  env3.post(guest({ name: 'דני כהן', adults: 2 }));
+  env3.post(guest({ name: 'מיכל כהן', adults: 2, adultNames: ['דני'] }));
+  assert.match(env3.rows()[1].check, /דני כהן/);
+});
+
+test('ספירה כפולה: אין אזעקת שווא על משפחות אחרות או על מי שלא מגיע', () => {
+  const env = createEnv();
+  env.post(guest({ name: 'דני כהן', adults: 2, adultNames: ['מיכל'] }));
+  env.post(guest({ name: 'מיכל לוי', adults: 1 }));                       // שם משפחה אחר
+  env.post(guest({ name: 'יוסי כהן', adults: 2, adultNames: ['רונית'] })); // אותו שם משפחה, אנשים אחרים
+  env.post(guest({ name: 'מיכל כהן', attending: 'no' }));                  // לא מגיעה – לא נספרת בכלל
+  assert.deepEqual(env.rows().map((r) => r.check), ['', '', '', '']);
+});
+
+test('ספירה כפולה: הסימון נעלם אחרי שאחד מבני הזוג מעדכן ל"לא מגיע"', () => {
+  const env = createEnv();
+  env.post(guest({ name: 'דני כהן', adults: 2, adultNames: ['מיכל'] }));
+  env.post(guest({ name: 'מיכל כהן', adults: 2, adultNames: ['דני'] }));
+  assert.match(env.rows()[1].check, /דני כהן/);
+  env.post(guest({ name: 'מיכל כהן', attending: 'no' }));
+  assert.equal(env.rows()[1].check, '');
+  env.post(guest({ name: 'דני כהן', adults: 2, adultNames: ['מיכל'] }));
+  assert.equal(env.rows()[0].check, '', 'עדכון של דני – מיכל כבר לא מגיעה בנפרד, אין חשד');
 });

@@ -277,6 +277,15 @@ input[aria-invalid="true"] { border-color: #B3394F; }
 .stepper-ctl .icon { stroke-width: 2.3; }
 .stepper-ctl output { min-width: 34px; text-align: center; font-family: var(--display); font-weight: 600; font-size: 28px; color: var(--ink); font-variant-numeric: tabular-nums; }
 
+.field-hint { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 4px; }
+.comp-list { display: flex; flex-direction: column; gap: 8px; }
+.comp-row { display: flex; align-items: center; gap: 8px; }
+.comp-chip { flex-shrink: 0; min-width: 74px; padding: 6px 10px; border-radius: 12px; text-align: center; font-size: 14px; font-weight: 700; }
+.comp-chip.adult { background: var(--sky); color: #35506B; }
+.comp-chip.kid { background: var(--pink); color: #5B3B45; }
+.comp-row input { min-height: 48px; padding: 8px 14px; }
+.confirm-names { margin-top: 4px; font-size: 13.5px; line-height: 1.35; font-weight: 600; overflow-wrap: anywhere; }
+
 .send-error { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; background: #FBE4E8; color: #6E1F30; font-size: 15px; }
 .hint { text-align: center; font-size: 14.5px; color: var(--ink-soft); }
 
