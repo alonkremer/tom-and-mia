@@ -168,6 +168,11 @@
 
     var anchor = name === 'main' && hash ? document.getElementById(hash) : null;
     if (anchor) {
+      // מקטע שעוד לא "נחשף" מוזז 18px למטה; חושפים אותו מיד (בלי אנימציה) כדי שהקפיצה תנחת בדיוק
+      anchor.style.transition = 'none';
+      anchor.classList.add('in');
+      void anchor.offsetHeight;
+      anchor.style.transition = '';
       anchor.scrollIntoView({ behavior: reducedMotion || cameFromOtherView ? 'instant' : 'smooth', block: 'start' });
     } else {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -343,27 +348,47 @@
     btn.disabled = true;
     label.textContent = t('js.sending');
 
-    var ctl = new AbortController();
-    var timer = setTimeout(function () { ctl.abort(); }, 20000);
+    // Apps Script עונה בדרך כלל תוך 2–3 שניות, אבל לפעמים לוקח לו חצי דקה או שהוא מחזיר שגיאה רגעית.
+    // לכן: ממתינים בסבלנות, מרגיעים את האורח, ומנסים שוב. ניסיון חוזר בטוח – אותו שם רק מעדכן את אותה שורה.
+    var slowTimer = setTimeout(function () { label.textContent = t('js.sendingSlow'); }, 6000);
+    var timeouts = cfg.rsvpTimeoutsMs || [30000, 40000];
 
+    var attempt = function (n) {
+      return postRsvp(data, timeouts[n]).catch(function (err) {
+        if (n + 1 < timeouts.length) return attempt(n + 1);
+        throw err;
+      });
+    };
+
+    attempt(0)
+      .then(done)
+      .catch(function () {
+        $('#send-wa').href = waUrl(rsvpText(data));
+        $('#send-error').hidden = false;
+      })
+      .then(function () {
+        clearTimeout(slowTimer);
+        btn.disabled = false;
+        label.textContent = t('rsvp.send');
+      });
+  }
+
+  function postRsvp(data, timeoutMs) {
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, timeoutMs);
     // text/plain כדי להימנע מבקשת preflight ש-Apps Script לא תומך בה
-    fetch(cfg.rsvpEndpoint, {
+    return fetch(cfg.rsvpEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(data),
       signal: ctl.signal
     })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw new Error('bad response'); done(); })
-      .catch(function () {
-        $('#send-wa').href = waUrl(rsvpText(data));
-        $('#send-error').hidden = false;
+      .then(function (j) {
+        // רק תשובה שמאשרת כתיבה נחשבת הצלחה. ok בלי action = הבקשה לא הגיעה ל-doPost.
+        if (!j || !j.ok || (j.action !== 'created' && j.action !== 'updated')) throw new Error('not saved');
       })
-      .then(function () {
-        clearTimeout(timer);
-        btn.disabled = false;
-        label.textContent = t('rsvp.send');
-      });
+      .then(function () { clearTimeout(timer); }, function (err) { clearTimeout(timer); throw err; });
   }
 
   /* ---------- מתנה ---------- */

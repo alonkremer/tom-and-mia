@@ -12,6 +12,7 @@ window.I18N = {
     'js.copied': 'המספר הועתק',
     'js.copyFail': 'לא הצלחנו להעתיק, המספר: {phone}',
     'js.sending': 'שולחים…',
+    'js.sendingSlow': 'עוד רגע… זה לוקח קצת זמן',
     'js.gd.title.bit': 'מתנה ב‑bit',
     'js.gd.title.paybox': 'מתנה ב‑PayBox',
     'js.gd.step1.bit': 'פתחו את אפליקציית bit',
@@ -34,7 +35,7 @@ window.I18N = {
     'js.wa.food': 'אלרגיות / העדפות',
     'js.wa.note': 'ברכה',
     'js.cal.title': 'הברית של תום ויום ההולדת של מיה',
-    'js.cal.details': '10:30 קבלת פנים · 11:00 בראנץ׳ · 12:30 טקס הברית וברכות · 13:00 סיום. חניה: מגרש סופר ויקטורי, כניסה מרחוב יואל סגל בלבד.'
+    'js.cal.details': '10:30 הגעה והתכנסות · 11:00 בראנץ׳ · 12:30 טקס הברית וברכות · 13:00 סיום. חניה: מגרש סופר ויקטורי, כניסה מרחוב יואל סגל בלבד.'
   },
   en: {
     'hero.lead': 'With joy and excitement, we invite you to celebrate with us',
@@ -53,7 +54,7 @@ window.I18N = {
     'photos.title': 'Our family is growing',
     'photos.ph': 'Photo',
     'plan.title': 'The plan',
-    'plan.1': 'Reception',
+    'plan.1': 'Arrival & gathering',
     'plan.2': 'Brunch',
     'plan.3': 'Brit ceremony & blessings',
     'plan.4': 'Estimated end',
@@ -131,6 +132,7 @@ window.I18N = {
     'js.copied': 'Number copied',
     'js.copyFail': 'Couldn’t copy. The number: {phone}',
     'js.sending': 'Sending…',
+    'js.sendingSlow': 'Almost there… this can take a moment',
     'js.gd.title.bit': 'Gift via bit',
     'js.gd.title.paybox': 'Gift via PayBox',
     'js.gd.step1.bit': 'Open the bit app',
@@ -153,6 +155,6 @@ window.I18N = {
     'js.wa.food': 'Allergies / preferences',
     'js.wa.note': 'Message',
     'js.cal.title': 'Tom’s Brit Milah & Mia’s 2nd Birthday',
-    'js.cal.details': '10:30 Reception · 11:00 Brunch · 12:30 Brit ceremony & blessings · 13:00 End. Parking: Victory supermarket lot, entrance from Yoel Segal St only.'
+    'js.cal.details': '10:30 Arrival & gathering · 11:00 Brunch · 12:30 Brit ceremony & blessings · 13:00 End. Parking: Victory supermarket lot, entrance from Yoel Segal St only.'
   }
 };

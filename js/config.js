@@ -11,6 +11,9 @@ window.EVENT_CONFIG = {
   // כל עוד השדה ריק – אישורי ההגעה נשלחים אליכם בוואטסאפ במקום לגיליון.
   rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbzgbxlLWN-qu0i5ltKF47Dh1GXWmwaZMRo96x3I-_WXX5xNxoeGcA-xnZgYZxBC5Ge8hg/exec',
 
+  // כמה זמן מחכים לגיליון בכל ניסיון שליחה (אלפיות שנייה). שני ערכים = ניסיון ראשון + ניסיון חוזר אחד.
+  rsvpTimeoutsMs: [30000, 40000],
+
   // טלפון לביט / פייבוקס / וואטסאפ
   phoneDisplay: '054-948-8882',
   phoneLocal: '0549488882',
