@@ -1,0 +1,7 @@
+{
+  "name": "tom-and-mia-e2e",
+  "private": true,
+  "description": "End-to-end checks for the invitation site (real Chrome, device emulation)",
+  "scripts": { "test": "node run.js" },
+  "dependencies": { "puppeteer-core": "^23.11.1" }
+}

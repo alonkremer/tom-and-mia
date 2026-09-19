@@ -2,3 +2,7 @@ node_modules/
 .DS_Store
 Thumbs.db
 .claude/settings.local.json
+
+tests/e2e/shots/
+tests/e2e/results*.json
+tests/e2e/package-lock.json
