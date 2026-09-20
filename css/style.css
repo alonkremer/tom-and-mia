@@ -361,3 +361,87 @@ dialog h2 { font-size: 24px; }
   }
   .page { position: relative; z-index: 1; }
 }
+
+/* ==========================================================================
+   טקסט גדול – קריאות לאורחים מבוגרים.
+   טקסט המידע הוגדל פי ~1.75 (16px → 28px, 14.5px → 25px), והכותרות, הכפתורים
+   והשדות הותאמו סביבו. כדי לכוונן – משנים את שלושת המשתנים הראשונים.
+   ========================================================================== */
+:root { --t-body: 28px; --t-small: 25px; --t-label: 26px; }
+
+body { font-size: var(--t-body); line-height: 1.45; }
+h2 { font-size: 36px; }
+h3 { font-size: 30px; }
+h3.plain { font-size: var(--t-body); }
+
+/* כפתורים */
+.btn { min-height: 58px; font-size: 21px; }
+.btn-lg { min-height: 66px; font-size: clamp(21px, 6.2vw, 25px); }
+.btn-soft { min-height: 52px; font-size: 20px; }
+.btn-text { min-height: 52px; }
+.btn-row .btn { padding: 0 14px; }
+.lang-toggle { min-width: 62px; height: 50px; font-size: 19px; border-radius: 25px; }
+
+/* ראש העמוד */
+.hero-lead { font-size: var(--t-body); line-height: 1.3; }
+.name-label { font-size: clamp(27px, 7.8vw, 34px); }
+.date-pill { font-size: clamp(19px, 5.7vw, 25px); text-wrap: balance; }
+.hero-where { font-size: clamp(21px, 6.4vw, 25px); }
+.hero .btn-lg { min-width: min(100%, 300px); font-size: clamp(21px, 6.2vw, 25px); }
+.footer .btn-lg { min-width: min(100%, 300px); }
+.hero-deadline { font-size: var(--t-small); max-width: none; line-height: 1.35; }
+.count-line { font-size: 20px; }
+.count-line b { font-size: 22px; }
+
+/* תוכן */
+.schedule.compact li { font-size: var(--t-label); padding: 10px 0; }
+.schedule.compact .time { width: 86px; font-size: 22px; padding: 4px 0; }
+.cal-menu a { min-height: 58px; font-size: 21px; }
+.note-card { flex-direction: column; gap: 10px; }
+.note-card p { font-size: 27px; line-height: 1.4; }
+.phone-row { flex-wrap: wrap; justify-content: center; gap: 10px 16px; padding: 14px 18px; border-radius: 28px; }
+html[dir="ltr"] .phone-row { padding: 14px 18px; }
+.phone-text { align-items: center; }
+.phone-label { font-size: 23px; }
+.phone-num { font-size: 28px; }
+.phone-num.big { font-size: 36px; }
+.footer-title { font-size: 36px; }
+.footer-names { font-size: var(--t-body); }
+
+/* טופס */
+.back-link { font-size: 22px; min-height: 50px; }
+.view-rsvp h1 { font-size: 42px; }
+.sub, .already { font-size: 26px; line-height: 1.35; }
+label, legend { font-size: var(--t-label); }
+input[type="text"], input[type="tel"], textarea { min-height: 62px; font-size: 24px; }
+.error { font-size: var(--t-small); }
+.segmented span { min-height: 66px; font-size: 22px; line-height: 1.2; }
+.stepper-label { font-size: var(--t-label); }
+.stepper-hint { font-size: 22px; margin-top: -6px; }
+.stepper-ctl { gap: 12px; }
+.stepper-ctl button { width: 54px; height: 54px; }
+.stepper-ctl .icon { width: 26px; height: 26px; }
+.stepper-ctl output { min-width: 44px; font-size: 36px; }
+.field-hint { font-size: 26px; line-height: 1.35; }
+.comp-chip { min-width: 108px; font-size: 22px; padding: 8px 10px; }
+.comp-row input { min-height: 58px; }
+.send-error { font-size: 26px; }
+.hint { font-size: var(--t-small); }
+
+/* חלונות קופצים ומסכי תודה */
+dialog h2 { font-size: 32px; }
+.dialog-copied { font-size: 22px; }
+.dialog-steps li { font-size: var(--t-label); gap: 12px; }
+.dialog-steps li::before { width: 36px; height: 36px; font-size: 21px; }
+.confirm-num { font-size: 52px; }
+.confirm-names { font-size: 22px; }
+.confirm-total { font-size: var(--t-body); }
+.confirm-total strong { font-size: 34px; }
+.view-thanks h1 { font-size: 46px; }
+.thanks-sub { font-size: 30px; line-height: 1.25; }
+.toast { font-size: 22px; white-space: normal; text-align: center; width: max-content; max-width: 90vw; border-radius: 22px; }
+
+/* במסכי טלפון: כפתורים ומונים אחד מתחת לשני, כדי שהטקסט הגדול לא יידחס */
+@media (max-width: 480px) {
+  .btn-row, .steppers, .cal-menu { grid-template-columns: 1fr; }
+}

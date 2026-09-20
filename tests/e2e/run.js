@@ -559,7 +559,7 @@ async function realBackend(browser) {
   try {
     const stages = { layout: layoutAndVisual, functional, a11y: accessibility, meta: metaAndPerf, real: realBackend };
     for (const [k, fn] of Object.entries(stages)) {
-      if (only && only !== k) continue;
+      if (only ? only !== k : k === 'real') continue; // 'real' כותב שורת בדיקה לגיליון האמיתי – רץ רק בבקשה מפורשת: node run.js real
       console.log('==', k);
       try { await fn(browser); } catch (e) { check(k, 'השלב רץ עד הסוף', false, String(e && e.stack || e).slice(0, 400)); }
     }
