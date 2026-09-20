@@ -414,6 +414,27 @@
     return ok;
   }
 
+  // דומיינים של "קישורים אוניברסליים" שהאפליקציות עצמן רשמו (apple-app-site-association / assetlinks.json):
+  // לחיצה על קישור כזה פותחת את האפליקציה אם היא מותקנת. package = מזהה האפליקציה באנדרואיד.
+  var PAY_APPS = {
+    bit: { url: 'https://bitpay.page.link/open', pkg: 'com.bnhp.payments.paymentsapp' },
+    paybox: { url: 'https://links.payboxapp.com/open', pkg: 'com.payboxapp' }
+  };
+
+  function appLink(app) {
+    var personal = app === 'bit' ? cfg.bitLink : cfg.payboxLink;
+    if (personal) return personal;
+    var ua = navigator.userAgent;
+    var target = PAY_APPS[app];
+    if (/Android/i.test(ua)) {
+      // intent: פותח ישירות את האפליקציה; אם היא לא מותקנת – עובר לחנות
+      return 'intent://' + target.url.replace('https://', '') + '#Intent;scheme=https;package=' + target.pkg +
+        ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=' + target.pkg) + ';end';
+    }
+    if (/iPhone|iPad|iPod/i.test(ua)) return target.url;
+    return ''; // במחשב אין אפליקציה לפתוח
+  }
+
   function initGift() {
     var dlg = $('#gift-dialog');
 
@@ -426,10 +447,15 @@
         var app = btn.getAttribute('data-gift');
         $('#gift-dialog-title').textContent = t('js.gd.title.' + app);
         $('#gd-step1').textContent = t('js.gd.step1.' + app);
-        var link = app === 'bit' ? cfg.bitLink : cfg.payboxLink;
+        var link = appLink(app);
         var open = $('#gd-open');
         open.hidden = !link;
-        if (link) { open.href = link; open.textContent = t('js.gd.open.' + app); }
+        $('#gd-open-note').hidden = !link;
+        if (link) {
+          open.href = link;
+          open.textContent = t('js.gd.open.' + app);
+          $('#gd-step1').textContent = t('js.gd.step1.' + app + '.tap');
+        }
         $('.dialog-copied').style.visibility = 'hidden';
         if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
         copyPhone().then(function (ok) { $('.dialog-copied').style.visibility = ok ? 'visible' : 'hidden'; });
