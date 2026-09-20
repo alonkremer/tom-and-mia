@@ -213,13 +213,35 @@ async function functional(browser) {
     copied: getComputedStyle(document.querySelector('.dialog-copied')).visibility, num: document.querySelector('#gift-dialog .phone-num').textContent, openBtnHidden: document.querySelector('#gd-open').hidden }));
   check(G, 'bit: החלון נפתח עם הכותרת והמספר', gd.open && gd.title.includes('bit') && gd.step1.includes('bit') && gd.num === '054-948-8882', gd);
   const openBtn = await page.evaluate(() => ({ hidden: document.querySelector('#gd-open').hidden, href: document.querySelector('#gd-open').getAttribute('href'), text: document.querySelector('#gd-open').textContent, note: !document.querySelector('#gd-open-note').hidden }));
-  check(G, 'bit באייפון: כפתור "פתיחת bit" עם הקישור האוניברסלי של האפליקציה', !openBtn.hidden && openBtn.href === 'https://bitpay.page.link/open' && openBtn.text === 'פתיחת bit' && openBtn.note && gd.step1.includes('פתיחת bit'), openBtn);
+  check(G, 'bit באייפון: כפתור "פתיחת bit" עם קישור התשלום האישי (מה-QR)', !openBtn.hidden && openBtn.href === 'https://www.bitpay.co.il/app/me/F64A64DB-6EB8-23B6-97AC-CD5F9A7EABCF8EA3' && openBtn.text === 'פתיחת bit' && openBtn.note && gd.step1.includes('פתיחת bit'), openBtn);
   check(G, 'bit: המספר הועתק אוטומטית', gd.copied === 'visible' && await page.evaluate(() => navigator.clipboard.readText()) === '0549488882', gd.copied);
+  const steps = await page.$$eval('#gift-dialog .dialog-steps li', (l) => l.map((e) => e.textContent));
+  check(G, 'bit: שני צעדים בלבד, בלי הדבקת מספר (הקישור האישי פותח ישר תשלום לאלון קרמר)', steps.length === 2 && !steps.join(' ').includes('חזרו') && steps[1].includes('אלון קרמר') && !steps[1].includes('הדביקו'), steps);
   await shot(page, 'gift-dialog-phone-he', false);
+
+  // חזרה מהאפליקציה: מהר מדי → נשארים בחלון; אחרי זמן סביר → מסך תודה אוטומטי
+  const comeBack = (afterMs) => page.evaluate(async (ms) => {
+    window.EVENT_CONFIG.giftReturnMs = 600;
+    const open = document.querySelector('#gd-open');
+    open.addEventListener('click', (e) => e.preventDefault(), { once: true }); // בבדיקה לא באמת יוצאים לאפליקציה
+    open.click();
+    await new Promise((res) => setTimeout(res, ms));
+    document.dispatchEvent(new Event('visibilitychange'));
+    await new Promise((res) => setTimeout(res, 200));
+    return { hash: location.hash, open: document.querySelector('#gift-dialog').open };
+  }, afterMs);
+  const quick = await comeBack(100);
+  check(G, 'חזרה מיידית מהאפליקציה: נשארים בחלון המתנה', quick.open && quick.hash !== '#thanks-gift', quick);
+  const later = await comeBack(800);
+  check(G, 'חזרה אחרי זמן העברה: מסך "תודה על המתנה" מופיע לבד', !later.open && later.hash === '#thanks-gift', later);
+  await page.evaluate(() => { location.hash = ''; }); await sleep(400);
+  await page.evaluate(() => document.querySelector('[data-gift="bit"]').scrollIntoView({ behavior: 'instant', block: 'center' }));
+  await page.click('[data-gift="bit"]'); await sleep(400);
   await page.click('#gd-cancel'); await sleep(200);
-  check(G, '"אולי אחר כך" סוגר בלי לעבור מסך', !(await page.$eval('#gift-dialog', (d) => d.open)) && (await hash(page)) === '');
+  check(G, '"סגירה" סוגרת בלי לעבור מסך', !(await page.$eval('#gift-dialog', (d) => d.open)) && (await hash(page)) === '');
   await page.click('[data-gift="paybox"]'); await sleep(400);
   check(G, 'PayBox באייפון: הכפתור מצביע על links.payboxapp.com', (await page.$eval('#gd-open', (e) => e.getAttribute('href'))) === 'https://links.payboxapp.com/open');
+  check(G, 'PayBox: אין קישור אישי, לכן ההוראה היא להדביק את המספר', (await page.$eval('#gd-step2', (e) => e.textContent)).includes('הדביקו את המספר'));
   check(G, 'PayBox: הכותרת מתחלפת', (await page.$eval('#gift-dialog-title', (e) => e.textContent)).includes('PayBox'));
   await page.keyboard.press('Escape'); await sleep(200);
   check(G, 'Escape סוגר את החלון', !(await page.$eval('#gift-dialog', (d) => d.open)));
@@ -243,8 +265,8 @@ async function functional(browser) {
     const bitHref = await ap.$eval('#gd-open', (e) => e.getAttribute('href'));
     await ap.evaluate(() => { document.querySelector('#gd-cancel').click(); document.querySelector('[data-gift="paybox"]').click(); }); await sleep(300);
     const pbHref = await ap.$eval('#gd-open', (e) => e.getAttribute('href'));
-    check(G, 'אנדרואיד: קישורי intent עם שם החבילה וגיבוי לחנות',
-      bitHref.startsWith('intent://bitpay.page.link/open#Intent;scheme=https;package=com.bnhp.payments.paymentsapp;S.browser_fallback_url=') && bitHref.endsWith(';end') &&
+    check(G, 'אנדרואיד: bit = הקישור האישי, PayBox = intent עם שם החבילה וגיבוי לחנות',
+      bitHref === 'https://www.bitpay.co.il/app/me/F64A64DB-6EB8-23B6-97AC-CD5F9A7EABCF8EA3' &&
       pbHref.startsWith('intent://links.payboxapp.com/open#Intent;scheme=https;package=com.payboxapp;'), [bitHref, pbHref]);
     await ap.close();
     const dp = await browser.newPage();
@@ -261,6 +283,7 @@ async function functional(browser) {
   await sleep(400);
   await page.click('#gift-to-rsvp');
   const navOk = await waitHash(page, '#rsvp', 3000);
+  await sleep(250); // המסך מתחלף באירוע hashchange, רגע אחרי שהכתובת משתנה
   check(G, 'מעבר ממסך המתנה לטופס', navOk && !(await isHidden(page, '#view-rsvp')) && await isHidden(page, '#view-main'),
     { navOk, hash: await hash(page), btn: await page.evaluate(() => { const b = document.querySelector('#gift-to-rsvp'); const r = b.getBoundingClientRect(); const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return { hidden: b.hidden, rect: [Math.round(r.top), Math.round(r.height)], topEl: top && (top.id || top.className) }; }) });
   check(G, 'בטופס אין כפתור צף', await isHidden(page, '#sticky-cta'));

@@ -431,6 +431,7 @@ input[type="text"], input[type="tel"], textarea { min-height: 62px; font-size: 2
 /* חלונות קופצים ומסכי תודה */
 dialog h2 { font-size: 32px; }
 .dialog-copied { font-size: 22px; }
+.dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .dialog-note { font-size: 21px; line-height: 1.3; color: var(--ink-soft); }
 .dialog-steps li { font-size: var(--t-label); gap: 12px; }
 .dialog-steps li::before { width: 36px; height: 36px; font-size: 21px; }

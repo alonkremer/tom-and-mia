@@ -421,18 +421,19 @@
     paybox: { url: 'https://links.payboxapp.com/open', pkg: 'com.payboxapp' }
   };
 
+  function personalLink(app) { return app === 'bit' ? cfg.bitLink : cfg.payboxLink; }
+
   function appLink(app) {
-    var personal = app === 'bit' ? cfg.bitLink : cfg.payboxLink;
-    if (personal) return personal;
     var ua = navigator.userAgent;
+    if (!/Android|iPhone|iPad|iPod/i.test(ua)) return ''; // במחשב אין אפליקציה לפתוח
+    if (personalLink(app)) return personalLink(app);     // נפתח ישר על מסך התשלום
     var target = PAY_APPS[app];
     if (/Android/i.test(ua)) {
       // intent: פותח ישירות את האפליקציה; אם היא לא מותקנת – עובר לחנות
       return 'intent://' + target.url.replace('https://', '') + '#Intent;scheme=https;package=' + target.pkg +
         ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=' + target.pkg) + ';end';
     }
-    if (/iPhone|iPad|iPod/i.test(ua)) return target.url;
-    return ''; // במחשב אין אפליקציה לפתוח
+    return target.url;
   }
 
   function initGift() {
@@ -447,6 +448,7 @@
         var app = btn.getAttribute('data-gift');
         $('#gift-dialog-title').textContent = t('js.gd.title.' + app);
         $('#gd-step1').textContent = t('js.gd.step1.' + app);
+        $('#gd-step2').textContent = t('js.gd.step2.' + (appLink(app) && personalLink(app) ? 'direct' : 'paste'));
         var link = appLink(app);
         var open = $('#gd-open');
         open.hidden = !link;
@@ -463,8 +465,20 @@
     });
 
     var close = function () { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); };
+    var thank = function () { close(); location.hash = 'thanks-gift'; };
     $('#gd-cancel').addEventListener('click', close);
-    $('#gd-done').addEventListener('click', function () { close(); location.hash = 'thanks-gift'; });
+    $('#gd-done').addEventListener('click', thank);
+
+    // אין דרך לדעת אם ההעברה בוצעה, ולכן לא דורשים מהאורח "לאשר" אותה. מי שיצא לאפליקציה וחזר
+    // אחרי זמן סביר להעברה רואה את מסך התודה לבד; מי שחזר מיד (האפליקציה לא נפתחה) נשאר בחלון.
+    var leftAt = 0;
+    $('#gd-open').addEventListener('click', function () { leftAt = Date.now(); });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible' || !leftAt || !dlg.open) return;
+      var away = Date.now() - leftAt;
+      leftAt = 0;
+      if (away >= (cfg.giftReturnMs || 15000)) thank();
+    });
     dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
   }
 

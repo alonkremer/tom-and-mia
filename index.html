@@ -357,13 +357,14 @@
   <p class="phone-num big" dir="ltr" data-fill="phone">054-948-8882</p>
   <ol class="dialog-steps">
     <li id="gd-step1"></li>
-    <li data-i18n="gd.step2">באפליקציה: בחרו ״העברה״ והדביקו את המספר</li>
-    <li data-i18n="gd.step3">חזרו לכאן ולחצו ״העברתי״</li>
+    <li id="gd-step2"></li>
   </ol>
   <a class="btn btn-dark btn-lg btn-block" id="gd-open" href="#" rel="noopener" hidden></a>
   <p class="dialog-note" id="gd-open-note" hidden data-i18n="gd.openNote">האפליקציה לא נפתחה? פתחו אותה ידנית – המספר כבר הועתק.</p>
-  <button type="button" class="btn btn-primary btn-lg btn-block" id="gd-done"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="gd.done">העברתי</span></button>
-  <button type="button" class="btn btn-text btn-block" id="gd-cancel" data-i18n="gd.cancel">אולי אחר כך</button>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-outline" id="gd-done"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span data-i18n="gd.done">העברתי</span></button>
+    <button type="button" class="btn btn-text" id="gd-cancel" data-i18n="gd.cancel">סגירה</button>
+  </div>
 </dialog>
 
 <!-- חלון וידוא כמויות לפני שליחה -->
