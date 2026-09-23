@@ -161,8 +161,8 @@ async function functional(browser) {
   // תאריכים
   const dates = await page.evaluate(() => ({ pill: document.querySelector('.date-pill').textContent, deadline: document.querySelector('.hero-deadline').textContent }));
   const venue = await page.evaluate(() => ({ hero: document.querySelector('.hero-where').textContent, card: document.querySelector('[data-i18n="dir.venue"]').textContent, park: document.querySelector('[data-i18n="park.2"]').textContent, all: document.body.textContent }));
-  check(G, 'שם המקום: "אולם אירועים 770", החניה: "בניין הלבנים האדומות – ברוקלין 770", ואין "בית חב״ד" באתר',
-    venue.hero === 'אולם אירועים 770 · ראשון לציון' && venue.card === 'אולם אירועים 770' && venue.park.includes('בניין הלבנים האדומות – ברוקלין 770') && !/חב״ד|Chabad/.test(venue.all), [venue.hero, venue.card]);
+  check(G, 'שם המקום: ""בית 770"", החניה: "בניין הלבנים האדומות – "בית 770"", ואין "בית חב״ד" באתר',
+    venue.hero === '"בית 770" · ראשון לציון' && venue.card === '"בית 770"' && venue.park.includes('בניין הלבנים האדומות – "בית 770"') && !/חב״ד|Chabad/.test(venue.all), [venue.hero, venue.card]);
   check(G, 'תאריך האירוע והדדליין מוצגים נכון', dates.pill === 'יום שלישי · 27.10.2026 · 10:30' && dates.deadline.includes('יום שלישי, 20.10'), dates);
 
   check(G, 'לו"ז: 10:30 הגעה והתכנסות', (await page.$eval('.schedule li', (li) => li.textContent)).includes('הגעה והתכנסות'));
@@ -178,7 +178,7 @@ async function functional(browser) {
   check(G, 'קישור Google Maps עם הכתובת', links.gmaps.includes('destination=מרדכי יואל סגל 3, ראשון לציון'), links.gmaps);
   check(G, 'מפה מוטמעת עם הכתובת', links.map.includes('מרדכי יואל סגל 3') && links.map.includes('output=embed'), links.map);
   check(G, 'קישור וואטסאפ למספר הנכון', links.wa.startsWith('https://wa.me/972549488882?text='), links.wa.slice(0, 60));
-  check(G, 'יומן Google: תאריך ושעה נכונים (UTC)', links.gcal.includes('dates=20261027T083000Z/20261027T110000Z') && links.gcal.includes('אולם אירועים 770'), links.gcal.slice(0, 200));
+  check(G, 'יומן Google: תאריך ושעה נכונים (UTC)', links.gcal.includes('dates=20261027T083000Z/20261027T110000Z') && links.gcal.includes('"בית 770"'), links.gcal.slice(0, 200));
   check(G, 'קישורים חיצוניים עם rel=noopener', links.blank);
   const ics = await page.evaluate(async (u) => (await fetch(u)).text(), links.ics);
   check(G, 'קובץ היומן (ICS) תקין', /BEGIN:VEVENT/.test(ics) && ics.includes('DTSTART:20261027T083000Z') && ics.includes('DTEND:20261027T110000Z') && ics.includes('\r\n') && /END:VCALENDAR\s*$/.test(ics));
